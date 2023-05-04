@@ -1,16 +1,17 @@
 ﻿using APIBillExchange.Context;
 using APIBillExchange.Interfaces;
 using APIBillExchange.Models;
+using System.Diagnostics.Contracts;
 
 namespace APIBillExchange.Services
 {
     public class VueltoService : IVueltoService
     {
-        public void CantidadVuelto(decimal montoPagar, decimal montoPagado, MoneyExchangeContext _context)
+        public string CantidadVuelto(decimal montoPagar, decimal montoPagado, MoneyExchangeContext _context, Operacion operacion)
         {
             decimal vuelto = montoPagado - montoPagar; //vuelto al cliente
 
-            Operacion operacion = new Operacion(); //creo la operacion para registrarlo en la tabla
+            //Operacion operacion = new Operacion(); //creo la operacion para registrarlo en la tabla
             if (montoPagar != 0 && montoPagado != 0)
             {
                 operacion.MontoApagar = montoPagar;
@@ -28,7 +29,8 @@ namespace APIBillExchange.Services
 
             List<TransaccionCambio> transacciones = new List<TransaccionCambio>();
             List<Divisa> divisas = new List<Divisa>(_context.Divisa); //creo lista con todas las divisas que existen en la database
-            divisas.OrderByDescending(d => d.Valor);
+            divisas = divisas.OrderByDescending(d => d.Valor).ToList();
+
             var operacionAsociada = _context.Operacion.FirstOrDefault(op => op.MontoApagar == montoPagar && op.MontoPagado == montoPagado && op.FechaHora == operacion.FechaHora);
 
             foreach (var divisa in divisas) //voy divisa por divisa
@@ -40,14 +42,23 @@ namespace APIBillExchange.Services
                     vuelto -= divisa.Valor; //resto del vuelto el valor de la divisa
                     contador++; //le sumo 1 al contador asi me dice cuántas de esa divisa use
                 }
-
-                TransaccionCambio transaccion = new TransaccionCambio(); //creo la transaccion para registrar en la database
-                transaccion.IdDivisa = divisa.IdDivisa;
-                transaccion.CantidadDivisa = contador;
-                transaccion.IdOperacion = operacionAsociada.IdOperacion;
-                _context.Add(transaccion);
-                transacciones.Add(transaccion); //la agrego a la lista de transacciones para despues crear el mensaje
-                _context.SaveChanges();
+                if (contador != 0) //si el contador es distinto de 0, implica que se uso esa divisa (para sacarsela del vuelto)
+                {
+                    TransaccionCambio transaccion = new TransaccionCambio(); //creo la transaccion para registrar en la database
+                    transaccion.IdDivisa = divisa.IdDivisa;
+                    transaccion.CantidadDivisa = contador;
+                    transaccion.IdOperacion = operacionAsociada.IdOperacion;
+                    _context.Add(transaccion);
+                    transacciones.Add(transaccion); //la agrego a la lista de transacciones para despues crear el mensaje
+                    _context.SaveChanges();
+                }
+                //TransaccionCambio transaccion = new TransaccionCambio(); //creo la transaccion para registrar en la database
+                //transaccion.IdDivisa = divisa.IdDivisa;
+                //transaccion.CantidadDivisa = contador;
+                //transaccion.IdOperacion = operacionAsociada.IdOperacion;
+                //_context.Add(transaccion);
+                //transacciones.Add(transaccion); //la agrego a la lista de transacciones para despues crear el mensaje
+                //_context.SaveChanges();
 
                 if (vuelto == 0)
                 {
@@ -91,6 +102,12 @@ namespace APIBillExchange.Services
 
             }
 
+            if (mensaje == "Entregar ")
+            {
+                mensaje = "";
+            }
+
+            return mensaje;
             //foreach (var transaccion in transacciones)
             //{
             //    Divisa divisaMatch = divisas.FirstOrDefault(d => d.IdDivisa == transaccion.IdDivisa);

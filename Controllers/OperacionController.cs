@@ -86,17 +86,34 @@ namespace APIBillExchange.Controllers
         }
 
         // POST: api/Operacion
-        [HttpPost]
-        public async Task<ActionResult<Operacion>> PostOperacion(Operacion operacion)
+        [HttpPost("{montoAPagar}/{montoPagado}")]
+        public async Task<ActionResult<Operacion>> PostOperacion(Operacion operacion, decimal montoAPagar, decimal montoPagado)
         {
           if (_context.Operacion == null)
           {
               return Problem("Entity set 'MoneyExchangeContext.Operacion'  is null.");
           }
-            _context.Operacion.Add(operacion);
-            await _context.SaveChangesAsync();
+            //if (montoAPagar != 0 && montoPagado != 0)
+            //{
+            //    operacion.MontoApagar = montoAPagar;
+            //    operacion.MontoPagado = montoPagado;
+            //}
+            //_context.Operacion.Add(operacion);
+            //await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetOperacion", new { id = operacion.IdOperacion }, operacion);
+            string mensaje = _vuelto.CantidadVuelto(montoAPagar, montoPagado, _context, operacion);
+            
+            if (string.IsNullOrEmpty(mensaje))
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(mensaje);
+            }
+            
+
+            //return CreatedAtAction("GetOperacion", mensaje, new { id = operacion.IdOperacion }, operacion);
         }
 
         // DELETE: api/Operacion/5

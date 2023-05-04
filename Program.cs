@@ -17,7 +17,7 @@ builder.Services.AddDbContext<MoneyExchangeContext>
     (options => options.UseSqlServer(builder.Configuration.GetConnectionString("conString")));
 
 //Configurar las interfaces para que el controller las pueda usar.
-builder.Services.AddSingleton<IVueltoService, VueltoService>();
+builder.Services.AddTransient<IVueltoService, VueltoService>();
 
 var app = builder.Build();
 

@@ -1,6 +1,7 @@
 ﻿using APIBillExchange.Context;
 using APIBillExchange.Interfaces;
 using APIBillExchange.Models;
+using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.Contracts;
 using System.Drawing.Text;
 
@@ -8,14 +9,43 @@ namespace APIBillExchange.Services
 {
     public class VueltoService : IVueltoService
     {
-        public string CantidadVuelto(decimal montoPagar, decimal montoPagado, MoneyExchangeContext _context, Operacion operacion)
+        private readonly MoneyExchangeContext _context;
+        //private readonly IVueltoService _vuelto;
+
+        public VueltoService(MoneyExchangeContext context /*, IVueltoService vuelto*/)
+        {
+            _context = context;
+            //_vuelto = vuelto;
+        }
+
+        public List<Operacion> GetOperaciones()
+        {
+            return _context.Operacion.ToList();
+        }
+
+        public Operacion GetOperacionPorID(int id)
+        {
+            //Operacion operacion1;
+
+            //if (_context.Operacion == null)
+            //{
+            //    operacion1 = null;
+
+            //    return operacion1;
+            //}
+            Operacion operacion = _context.Operacion.FirstOrDefault(op => op.IdOperacion == id);
+                        
+            return operacion;
+        }
+
+        public string CantidadVuelto(decimal montoPagar, decimal montoPagado/*,*/ /*MoneyExchangeContext _context,*//* Operacion operacion*/)
         {
             string mensaje = "Entregar ";
-            string tipoDivisa = "";            
+            string tipoDivisa = "";
 
             decimal vuelto = montoPagado - montoPagar; //vuelto al cliente
 
-            //Operacion operacion = new Operacion(); //creo la operacion para registrarlo en la tabla
+            Operacion operacion = new Operacion(); //creo la operacion para registrarlo en la tabla
             if (montoPagar != 0 && montoPagado != 0)
             {
                 operacion.MontoApagar = montoPagar;

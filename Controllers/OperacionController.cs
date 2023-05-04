@@ -16,12 +16,12 @@ namespace APIBillExchange.Controllers
     [ApiController]
     public class OperacionController : ControllerBase
     {
-        private readonly MoneyExchangeContext _context;
+        //private readonly MoneyExchangeContext _context;
         private readonly IVueltoService _vuelto;
 
-        public OperacionController(MoneyExchangeContext context, IVueltoService vuelto)
+        public OperacionController(/*MoneyExchangeContext context, */IVueltoService vuelto)
         {
-            _context = context;
+            //_context = context;
             _vuelto = vuelto;
         }
 
@@ -29,29 +29,65 @@ namespace APIBillExchange.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Operacion>>> GetOperacion()
         {
-            if (_context.Operacion == null)
+            if (_vuelto.GetOperaciones() == null)
             {
                 return NotFound();
             }
-            return await _context.Operacion.ToListAsync();
+
+            return _vuelto.GetOperaciones();
+            //return await _context.Operacion.ToListAsync();
         }
 
         // GET: api/Operacion/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Operacion>> GetOperacion(int id)
         {
-            if (_context.Operacion == null)
+            if (_vuelto.GetOperacionPorID(id) == null)
             {
                 return NotFound();
             }
-            var operacion = await _context.Operacion.FindAsync(id);
-
-            if (operacion == null)
+            else
             {
-                return NotFound();
+                return _vuelto.GetOperacionPorID(id);
+            }
+            //if (_context.Operacion == null)
+            //{
+            //    return NotFound();
+            //}
+            //var operacion = await _context.Operacion.FindAsync(id);
+
+            //if (operacion == null)
+            //{
+            //    return NotFound();
+            //}
+
+            
+
+            //return operacion;
+        }
+
+        // POST: api/Operacion
+        [HttpPost("{montoAPagar}/{montoPagado}")]
+        public async Task<ActionResult<Operacion>> PostOperacion(/*Operacion operacion, */decimal montoAPagar, decimal montoPagado)
+        {
+            //if (_context.Operacion == null)
+            //{
+            //    return Problem("Entity set 'MoneyExchangeContext.Operacion'  is null.");
+            //}
+
+            string mensaje = _vuelto.CantidadVuelto(montoAPagar, montoPagado/*, operacion*/);
+
+            if (string.IsNullOrEmpty(mensaje))
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(mensaje);
             }
 
-            return operacion;
+
+            //return CreatedAtAction("GetOperacion", mensaje, new { id = operacion.IdOperacion }, operacion);
         }
 
         //// PUT: api/Operacion/5
@@ -85,29 +121,7 @@ namespace APIBillExchange.Controllers
         //    return NoContent();
         //}
 
-        // POST: api/Operacion
-        [HttpPost("{montoAPagar}/{montoPagado}")]
-        public async Task<ActionResult<Operacion>> PostOperacion(Operacion operacion, decimal montoAPagar, decimal montoPagado)
-        {
-            if (_context.Operacion == null)
-            {
-                return Problem("Entity set 'MoneyExchangeContext.Operacion'  is null.");
-            }
 
-            string mensaje = _vuelto.CantidadVuelto(montoAPagar, montoPagado, _context, operacion);
-
-            if (string.IsNullOrEmpty(mensaje))
-            {
-                return BadRequest();
-            }
-            else
-            {
-                return Ok(mensaje);
-            }
-
-
-            //return CreatedAtAction("GetOperacion", mensaje, new { id = operacion.IdOperacion }, operacion);
-        }
 
         //// DELETE: api/Operacion/5
         //[HttpDelete("{id}")]
@@ -129,9 +143,9 @@ namespace APIBillExchange.Controllers
         //    return NoContent();
         //}
 
-        private bool OperacionExists(int id)
-        {
-            return (_context.Operacion?.Any(e => e.IdOperacion == id)).GetValueOrDefault();
-        }
+        //private bool OperacionExists(int id)
+        //{
+        //    return (_context.Operacion?.Any(e => e.IdOperacion == id)).GetValueOrDefault();
+        //}
     }
 }

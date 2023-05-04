@@ -1,3 +1,8 @@
+using APIBillExchange.Context;
+using APIBillExchange.Interfaces;
+using APIBillExchange.Services;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +11,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<MoneyExchangeContext>
+    (options => options.UseSqlServer(builder.Configuration.GetConnectionString("conString")));
+builder.Services.AddSingleton<IVueltoService, VueltoService>();
 
 var app = builder.Build();
 

@@ -22,14 +22,14 @@ namespace APIBillExchange.Context
         public virtual DbSet<TipoDivisa> TipoDivisa { get; set; } = null!;
         public virtual DbSet<TransaccionCambio> TransaccionCambio { get; set; } = null!;
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                //                optionsBuilder.UseSqlServer("Data Source=(LocalDb)\\MSSQLLocalDB;Initial Catalog=MoneyExchange;Integrated Security=True");
-            }
-        }
+        //        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //        {
+        //            if (!optionsBuilder.IsConfigured)
+        //            {
+        //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        //                optionsBuilder.UseSqlServer("Data Source=(LocalDb)\\MSSQLLocalDB;Initial Catalog=MoneyExchange;Integrated Security=True");
+        //            }
+        //        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -48,6 +48,12 @@ namespace APIBillExchange.Context
                 entity.Property(e => e.IdTipoDivisa).HasColumnName("ID_Tipo_Divisa");
 
                 entity.Property(e => e.Valor).HasColumnType("decimal(18, 2)");
+
+                entity.HasOne(d => d.IdTipoDivisaNavigation)
+                    .WithMany(p => p.Divisas)
+                    .HasForeignKey(d => d.IdTipoDivisa)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Divisa_Tipo_Divisa");
             });
 
             modelBuilder.Entity<Operacion>(entity =>
@@ -91,6 +97,12 @@ namespace APIBillExchange.Context
                 entity.Property(e => e.IdDivisa).HasColumnName("ID_Divisa");
 
                 entity.Property(e => e.IdOperacion).HasColumnName("ID_Operacion");
+
+                entity.HasOne(d => d.IdDivisaNavigation)
+                    .WithMany(p => p.TransaccionCambios)
+                    .HasForeignKey(d => d.IdDivisa)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Transaccion_Cambio_Divisa");
 
                 entity.HasOne(d => d.IdOperacionNavigation)
                     .WithMany(p => p.TransaccionCambios)

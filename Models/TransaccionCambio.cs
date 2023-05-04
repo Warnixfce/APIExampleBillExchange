@@ -9,6 +9,8 @@ namespace APIBillExchange.Models
         public int IdDivisa { get; set; }
         public int CantidadDivisa { get; set; }
         public int IdOperacion { get; set; }
+
+        public virtual Divisa IdDivisaNavigation { get; set; } = null!;
         public virtual Operacion IdOperacionNavigation { get; set; } = null!;
     }
 }

@@ -29,10 +29,10 @@ namespace APIBillExchange.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Operacion>>> GetOperacion()
         {
-          if (_context.Operacion == null)
-          {
-              return NotFound();
-          }
+            if (_context.Operacion == null)
+            {
+                return NotFound();
+            }
             return await _context.Operacion.ToListAsync();
         }
 
@@ -40,10 +40,10 @@ namespace APIBillExchange.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Operacion>> GetOperacion(int id)
         {
-          if (_context.Operacion == null)
-          {
-              return NotFound();
-          }
+            if (_context.Operacion == null)
+            {
+                return NotFound();
+            }
             var operacion = await _context.Operacion.FindAsync(id);
 
             if (operacion == null)
@@ -54,55 +54,48 @@ namespace APIBillExchange.Controllers
             return operacion;
         }
 
-        // PUT: api/Operacion/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutOperacion(int id, Operacion operacion)
-        {
-            if (id != operacion.IdOperacion)
-            {
-                return BadRequest();
-            }
+        //// PUT: api/Operacion/5
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutOperacion(int id, Operacion operacion)
+        //{
+        //    if (id != operacion.IdOperacion)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            _context.Entry(operacion).State = EntityState.Modified;
+        //    _context.Entry(operacion).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!OperacionExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!OperacionExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         // POST: api/Operacion
         [HttpPost("{montoAPagar}/{montoPagado}")]
         public async Task<ActionResult<Operacion>> PostOperacion(Operacion operacion, decimal montoAPagar, decimal montoPagado)
         {
-          if (_context.Operacion == null)
-          {
-              return Problem("Entity set 'MoneyExchangeContext.Operacion'  is null.");
-          }
-            //if (montoAPagar != 0 && montoPagado != 0)
-            //{
-            //    operacion.MontoApagar = montoAPagar;
-            //    operacion.MontoPagado = montoPagado;
-            //}
-            //_context.Operacion.Add(operacion);
-            //await _context.SaveChangesAsync();
+            if (_context.Operacion == null)
+            {
+                return Problem("Entity set 'MoneyExchangeContext.Operacion'  is null.");
+            }
 
             string mensaje = _vuelto.CantidadVuelto(montoAPagar, montoPagado, _context, operacion);
-            
+
             if (string.IsNullOrEmpty(mensaje))
             {
                 return BadRequest();
@@ -111,30 +104,30 @@ namespace APIBillExchange.Controllers
             {
                 return Ok(mensaje);
             }
-            
+
 
             //return CreatedAtAction("GetOperacion", mensaje, new { id = operacion.IdOperacion }, operacion);
         }
 
-        // DELETE: api/Operacion/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOperacion(int id)
-        {
-            if (_context.Operacion == null)
-            {
-                return NotFound();
-            }
-            var operacion = await _context.Operacion.FindAsync(id);
-            if (operacion == null)
-            {
-                return NotFound();
-            }
+        //// DELETE: api/Operacion/5
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteOperacion(int id)
+        //{
+        //    if (_context.Operacion == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    var operacion = await _context.Operacion.FindAsync(id);
+        //    if (operacion == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            _context.Operacion.Remove(operacion);
-            await _context.SaveChangesAsync();
+        //    _context.Operacion.Remove(operacion);
+        //    await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         private bool OperacionExists(int id)
         {

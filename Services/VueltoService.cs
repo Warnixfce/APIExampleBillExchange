@@ -2,6 +2,7 @@
 using APIBillExchange.Interfaces;
 using APIBillExchange.Models;
 using System.Diagnostics.Contracts;
+using System.Drawing.Text;
 
 namespace APIBillExchange.Services
 {
@@ -9,6 +10,9 @@ namespace APIBillExchange.Services
     {
         public string CantidadVuelto(decimal montoPagar, decimal montoPagado, MoneyExchangeContext _context, Operacion operacion)
         {
+            string mensaje = "Entregar ";
+            string tipoDivisa = "";            
+
             decimal vuelto = montoPagado - montoPagar; //vuelto al cliente
 
             //Operacion operacion = new Operacion(); //creo la operacion para registrarlo en la tabla
@@ -23,7 +27,7 @@ namespace APIBillExchange.Services
             else
             {
                 //TODO: modificar el logger de error
-                Console.WriteLine("Error");
+                return mensaje;
 
             }
 
@@ -52,13 +56,6 @@ namespace APIBillExchange.Services
                     transacciones.Add(transaccion); //la agrego a la lista de transacciones para despues crear el mensaje
                     _context.SaveChanges();
                 }
-                //TransaccionCambio transaccion = new TransaccionCambio(); //creo la transaccion para registrar en la database
-                //transaccion.IdDivisa = divisa.IdDivisa;
-                //transaccion.CantidadDivisa = contador;
-                //transaccion.IdOperacion = operacionAsociada.IdOperacion;
-                //_context.Add(transaccion);
-                //transacciones.Add(transaccion); //la agrego a la lista de transacciones para despues crear el mensaje
-                //_context.SaveChanges();
 
                 if (vuelto == 0)
                 {
@@ -67,8 +64,6 @@ namespace APIBillExchange.Services
 
             }
 
-            string mensaje = "Entregar ";
-            string tipoDivisa = "";
 
             for (int i = 0; i < transacciones.Count(); i++) //recorro la lista de transacciones 
             {
@@ -108,25 +103,6 @@ namespace APIBillExchange.Services
             }
 
             return mensaje;
-            //foreach (var transaccion in transacciones)
-            //{
-            //    Divisa divisaMatch = divisas.FirstOrDefault(d => d.IdDivisa == transaccion.IdDivisa);
-
-            //    if (divisaMatch.IdTipoDivisa == 1) //es billete
-            //    {
-            //        tipoDivisa = " billete";
-            //    }
-            //    if (divisaMatch.IdTipoDivisa == 2) //es moneda
-            //    {
-            //        tipoDivisa = " moneda";
-            //    }
-            //    if (transaccion.CantidadDivisa > 1) //es mas de 1 billete/moneda
-            //    {
-            //        tipoDivisa += "s";
-            //    }
-
-
-            //string.Concat(mensaje, transaccion.CantidadDivisa, tipoDivisa, " de AR$ ", divisaMatch.Valor);
 
         }
 

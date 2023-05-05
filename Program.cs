@@ -1,4 +1,5 @@
 using APIBillExchange.Context;
+using APIBillExchange.Data_Access;
 using APIBillExchange.Interfaces;
 using APIBillExchange.Services;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,11 @@ builder.Services.AddDbContext<MoneyExchangeContext>
     (options => options.UseSqlServer(builder.Configuration.GetConnectionString("conString")));
 
 //Configurar las interfaces para que el controller las pueda usar.
-builder.Services.AddTransient<IVueltoService, VueltoService>();
+builder.Services.AddScoped<IVueltoService, VueltoService>();
+builder.Services.AddScoped<DivisaDA>();
+builder.Services.AddScoped<OperacionDA>();
+builder.Services.AddScoped<TipoDivisaDA>();
+builder.Services.AddScoped<TransaccionCambioDA>();
 
 var app = builder.Build();
 

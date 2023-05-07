@@ -10,10 +10,10 @@ namespace APIBillExchange.Data_Access
 
         public TipoDivisaDA(MoneyExchangeContext context)
         {
-            _context = context;           
+            _context = context;
         }
 
-        public string DivisaPorId(int idTipoDivisa)
+        public string DivisaById(int idTipoDivisa)
         {
             TipoDivisa tipoDivisa = _context.TipoDivisa.FirstOrDefault(td => td.IdTipoDivisa == idTipoDivisa);
             string nombreDivisa = tipoDivisa.Nombre;

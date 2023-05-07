@@ -19,7 +19,7 @@ namespace APIBillExchange.Data_Access
             return operacion;
         }
 
-        public Operacion OperacionPorID(int id)
+        public Operacion OperacionByID(int id)
         {
             Operacion operacion = _context.Operacion.FirstOrDefault(op => op.IdOperacion == id);
 
@@ -36,13 +36,6 @@ namespace APIBillExchange.Data_Access
             _context.SaveChanges();
 
             return operacion;
-        }
-
-        public Operacion MatchOperacion(decimal montoAPagar, decimal montoPagado, DateTime fechaHora)
-        {
-            var operacionAsociada = _context.Operacion.FirstOrDefault(op => op.MontoApagar == montoAPagar && op.MontoPagado == montoPagado && op.FechaHora == fechaHora);
-
-            return operacionAsociada;
         }
 
     }

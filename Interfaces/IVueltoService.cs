@@ -7,8 +7,8 @@ namespace APIBillExchange.Interfaces
     {
         public List<Operacion> GetOperaciones();
 
-        public Operacion GetOperacionPorID(int id);
+        public Operacion GetOperacionByID(int id);
 
-        public string CantidadVuelto(decimal montoPagar, decimal montoPagado/*,*//*, MoneyExchangeContext _context*/ /*Operacion operacion*/);
+        public string VueltoQuantity(decimal montoPagar, decimal montoPagado);
     }
 }

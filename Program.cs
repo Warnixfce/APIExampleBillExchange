@@ -6,18 +6,15 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//Configurar el acceso a los datos.
+//Data access
 builder.Services.AddDbContext<MoneyExchangeContext>
     (options => options.UseSqlServer(builder.Configuration.GetConnectionString("conString")));
 
-//Configurar las interfaces para que el controller las pueda usar.
+//Dependency inyection
 builder.Services.AddScoped<IVueltoService, VueltoService>();
 builder.Services.AddScoped<DivisaDA>();
 builder.Services.AddScoped<OperacionDA>();
@@ -26,7 +23,7 @@ builder.Services.AddScoped<TransaccionCambioDA>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+//Swagger
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

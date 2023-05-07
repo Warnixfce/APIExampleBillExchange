@@ -16,136 +16,70 @@ namespace APIBillExchange.Controllers
     [ApiController]
     public class OperacionController : ControllerBase
     {
-        //private readonly MoneyExchangeContext _context;
         private readonly IVueltoService _vuelto;
 
-        public OperacionController(/*MoneyExchangeContext context, */IVueltoService vuelto)
+        public OperacionController(IVueltoService vuelto)
         {
-            //_context = context;
-            _vuelto = vuelto;
+           _vuelto = vuelto;
         }
 
         // GET: api/Operacion
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Operacion>>> GetOperacion()
         {
-            if (_vuelto.GetOperaciones() == null)
+            var result = _vuelto.GetOperaciones();
+
+            if (result == null)
             {
                 return NotFound();
             }
 
-            return _vuelto.GetOperaciones();
-            //return await _context.Operacion.ToListAsync();
+            return result;
         }
 
         // GET: api/Operacion/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Operacion>> GetOperacion(int id)
         {
-            if (_vuelto.GetOperacionPorID(id) == null)
+            var result = _vuelto.GetOperacionByID(id);
+
+            if (result == null)
             {
                 return NotFound();
             }
             else
             {
-                return _vuelto.GetOperacionPorID(id);
-            }
-            //if (_context.Operacion == null)
-            //{
-            //    return NotFound();
-            //}
-            //var operacion = await _context.Operacion.FindAsync(id);
-
-            //if (operacion == null)
-            //{
-            //    return NotFound();
-            //}
-
-            
-
-            //return operacion;
+                return result;
+            }            
         }
 
         // POST: api/Operacion
         [HttpPost("{montoAPagar}/{montoPagado}")]
-        public async Task<ActionResult<Operacion>> PostOperacion(/*Operacion operacion, */decimal montoAPagar, decimal montoPagado)
+        public async Task<ActionResult<Operacion>> PostOperacion(decimal montoAPagar, decimal montoPagado)
         {
-            //if (_context.Operacion == null)
-            //{
-            //    return Problem("Entity set 'MoneyExchangeContext.Operacion'  is null.");
-            //}
+            string message = "";
 
-            string mensaje = _vuelto.CantidadVuelto(montoAPagar, montoPagado/*, operacion*/);
+            if (montoAPagar == 0 || montoPagado == 0)
+            {
+                message = "Ningún monto introducido debe ser cero.";
+                return BadRequest(message);
+            }
+            if (montoAPagar > montoPagado)
+            {
+                message = "El monto abonado debe ser mayor al monto a abonar.";
+                return BadRequest(message);
+            }
 
-            if (string.IsNullOrEmpty(mensaje))
+            message = _vuelto.VueltoQuantity(montoAPagar, montoPagado);
+
+            if (string.IsNullOrEmpty(message))
             {
                 return BadRequest();
-            }
+            }    
             else
             {
-                return Ok(mensaje);
+                return Ok(message);
             }
-
-
-            //return CreatedAtAction("GetOperacion", mensaje, new { id = operacion.IdOperacion }, operacion);
         }
-
-        //// PUT: api/Operacion/5
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutOperacion(int id, Operacion operacion)
-        //{
-        //    if (id != operacion.IdOperacion)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    _context.Entry(operacion).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!OperacionExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
-
-
-
-        //// DELETE: api/Operacion/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteOperacion(int id)
-        //{
-        //    if (_context.Operacion == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    var operacion = await _context.Operacion.FindAsync(id);
-        //    if (operacion == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    _context.Operacion.Remove(operacion);
-        //    await _context.SaveChangesAsync();
-
-        //    return NoContent();
-        //}
-
-        //private bool OperacionExists(int id)
-        //{
-        //    return (_context.Operacion?.Any(e => e.IdOperacion == id)).GetValueOrDefault();
-        //}
     }
 }

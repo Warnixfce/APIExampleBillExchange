@@ -8,26 +8,36 @@ namespace APIBillExchange.Data_Access
 {
     public class TipoDivisaDA
     {
+        #region Dapper
+        //string connectionString = "Data Source=(LocalDb)\\MSSQLLocalDB;Initial Catalog=MoneyExchange;Integrated Security=True";
+        #endregion
+
+        #region EntityFrameworkCore
         private readonly MoneyExchangeContext _context;
-        string connectionString = "Data Source=(LocalDb)\\MSSQLLocalDB;Initial Catalog=MoneyExchange;Integrated Security=True";
 
         public TipoDivisaDA(MoneyExchangeContext context)
         {
             _context = context;
         }
+        #endregion
 
         public string DivisaById(int idTipoDivisa)
         {
             TipoDivisa tipoDivisa = new TipoDivisa();
-            var queryTipoDivisa = $"SELECT ID_Tipo_Divisa AS IdTipoDivisa, Nombre AS Nombre FROM Tipo_Divisa WHERE ID_Tipo_Divisa = {idTipoDivisa}";
 
-            using (var connection = new SqlConnection(connectionString))
-            {
-                tipoDivisa = connection.QuerySingle<TipoDivisa>(queryTipoDivisa);
-            }
+            #region Dapper
+            //var queryTipoDivisa = $"SELECT ID_Tipo_Divisa AS IdTipoDivisa, Nombre AS Nombre FROM Tipo_Divisa WHERE ID_Tipo_Divisa = {idTipoDivisa}";
 
+            //using (var connection = new SqlConnection(connectionString))
+            //{
+            //    tipoDivisa = connection.QuerySingle<TipoDivisa>(queryTipoDivisa);
+            //}
+            #endregion
 
-            //TipoDivisa tipoDivisa = _context.TipoDivisa.FirstOrDefault(td => td.IdTipoDivisa == idTipoDivisa);
+            #region EntityFrameworkCore
+            tipoDivisa = _context.TipoDivisa.FirstOrDefault(td => td.IdTipoDivisa == idTipoDivisa);
+            #endregion
+
             string nombreDivisa = tipoDivisa.Nombre;
 
             return nombreDivisa;

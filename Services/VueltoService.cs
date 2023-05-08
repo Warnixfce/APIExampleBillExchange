@@ -2,7 +2,9 @@
 using APIBillExchange.Data_Access;
 using APIBillExchange.Interfaces;
 using APIBillExchange.Models;
+using MessagePack;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Drawing.Text;
 
@@ -67,8 +69,19 @@ namespace APIBillExchange.Services
 
             }
 
+            MessageCreation(transacciones, divisas, ref message);
+
+            if (message == "Entregar ")
+            {
+                message = "";
+            }
+
+            return message;
+        }
 
 
+        public void MessageCreation(List<TransaccionCambio> transacciones, List<Divisa> divisas, ref string message)
+        {           
             for (int i = 0; i < transacciones.Count(); i++) //Loop through the transacciones list
             {
                 Divisa divisaMatch = divisas.FirstOrDefault(d => d.IdDivisa == transacciones[i].IdDivisa); //Check which bill/coin is associated with the transaction in place
@@ -94,14 +107,8 @@ namespace APIBillExchange.Services
                 }
 
             }
-
-            if (message == "Entregar ")
-            {
-                message = "";
-            }
-
-            return message;
         }
+
     }
 }
 
